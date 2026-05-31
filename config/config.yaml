@@ -1,0 +1,63 @@
+# Configuracao nao-sensivel do pipeline (segredos vao no .env).
+
+datasets:
+  # FONTE PRINCIPAL de grande volume (recomendada).
+  # Kaggle: amitanshjoshi/spotify-1million-tracks
+  # Inclui popularity, genre, year + audio features -> responde Q1, Q2, Q4 a escala.
+  primary:
+    name: spotify_1m_tracks
+    path: data/raw/spotify_data.csv
+    has_popularity: true
+    has_genre: true
+    enabled: true
+
+  # FONTE SECUNDARIA opcional (a do print).
+  # Kaggle: rodolfofigueroa/spotify-12m-songs  (ficheiro tracks_features.csv)
+  # ~1,2M faixas; audio features + year; SEM popularity/genre; licenca "Unknown".
+  # Util como cross-check de audio features entre colecoes independentes.
+  secondary:
+    name: spotify_12m_songs
+    path: data/raw/tracks_features.csv
+    has_popularity: false
+    has_genre: false
+    enabled: false
+
+paths:
+  raw: data/raw
+  staging: data/staging
+  curated: data/curated
+  samples: data/samples
+  duckdb: data/curated/curated.duckdb
+
+ingestion:
+  chunksize: 200000
+  partition_by: ["decade"]
+
+matching:
+  fuzzy_threshold: 90          # token-set ratio (RapidFuzz)
+  duration_tolerance_ms: 3000
+
+# APIs como fontes vivas. A Spotify e OPCIONAL: a Web API foi fechada a apps novas
+# sem Premium. O projeto funciona sem ela (popularity/genre vem do dataset; origem
+# geografica vem da MusicBrainz por nome de artista).
+sources:
+  spotify:
+    enabled: false   # poe a true so se tiveres acesso a Web API
+  reccobeats:
+    enabled: true
+  musicbrainz:
+    enabled: true
+
+enrichment:
+  musicbrainz_sample_artists: 200  # nr. de artistas distintos a enriquecer com pais
+  reccobeats_sample_size: 500      # amostra de faixas para validar audio features
+  spotify_popularity_sample: 5000  # (so se sources.spotify.enabled = true)
+
+analysis:
+  audio_features: ["danceability", "energy", "valence", "acousticness", "loudness", "tempo"]
+  decades: [1960, 1970, 1980, 1990, 2000, 2010, 2020]
+
+rate_limits:
+  musicbrainz_rps: 1
+  http_max_retries: 5
+  http_backoff_seconds: 2
