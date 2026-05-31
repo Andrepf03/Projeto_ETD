@@ -1,0 +1,28 @@
+flowchart LR
+  A["Spotify 1M Tracks - CSV grande volume"]
+  B["Spotify Web API - metadata + popularity + ISRC"]
+  C["ReccoBeats API - audio features"]
+  D["MusicBrainz API - origem + tags + ISRC"]
+
+  A --> E1["extract: ingest_dataset"]
+  B --> E2["extract: fetch_spotify"]
+  C --> E3["extract: fetch_reccobeats"]
+  D --> E4["extract: fetch_musicbrainz"]
+
+  E1 --> R["data/raw - bronze - Parquet particionado imutavel"]
+  E2 --> R
+  E3 --> R
+  E4 --> R
+
+  R --> T1["transform: clean + normalize"]
+  T1 --> T2["transform: match + join - ISRC, track_id, fuzzy"]
+  T2 --> Q{"quality gates - pandera / pydantic / SQL"}
+  Q -- passa --> S["data/staging - silver - Parquet limpo"]
+  Q -- falha --> X["quality report + STOP"]
+  S --> L1["load: build star schema"]
+  L1 --> G["data/curated - gold - curated.duckdb"]
+  G --> V["dashboard: Streamlit + Plotly"]
+
+  O["Orquestracao: Prefect flow OU Makefile CLI"] -.-> E1
+  O -.-> T1
+  O -.-> L1

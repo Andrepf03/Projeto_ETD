@@ -1,0 +1,51 @@
+erDiagram
+  DIM_ARTIST ||--o{ FACT_TRACK : performs
+  DIM_GENRE  ||--o{ FACT_TRACK : categorizes
+  DIM_TIME   ||--o{ FACT_TRACK : released_in
+  DIM_REGION ||--o{ DIM_ARTIST : origin_of
+  FACT_TRACK ||--o| FACT_TRACK_POPULARITY : measured_by
+
+  FACT_TRACK {
+    string track_sk PK
+    string spotify_track_id
+    string title
+    int    artist_sk FK
+    int    genre_sk FK
+    int    time_sk FK
+    float  danceability
+    float  energy
+    float  valence
+    float  acousticness
+    float  loudness
+    float  tempo
+    int    duration_ms
+    string match_method
+  }
+  FACT_TRACK_POPULARITY {
+    string track_sk FK
+    int    spotify_popularity
+    int    lastfm_listeners
+    int    lastfm_playcount
+    date   snapshot_date
+  }
+  DIM_ARTIST {
+    int    artist_sk PK
+    string artist_key
+    string artist_name
+    string mb_artist_mbid
+    int    region_sk FK
+  }
+  DIM_GENRE {
+    int    genre_sk PK
+    string genre_name
+  }
+  DIM_TIME {
+    int    time_sk PK
+    int    year
+    int    decade
+  }
+  DIM_REGION {
+    int    region_sk PK
+    string country_code
+    string area_name
+  }

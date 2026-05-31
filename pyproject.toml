@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "projeto-etd"
+version = "0.1.0"
+description = "Pipeline ETL — Música & Entretenimento (projeto académico)"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+  { name = "André Fazendeiro" },
+  { name = "Manuel Moura" },
+]
+dependencies = [
+  "httpx>=0.27",
+  "tenacity>=8.2",
+  "pydantic>=2.7",
+  "pydantic-settings>=2.2",
+  "pyyaml>=6.0",
+  "polars>=1.0",
+  "duckdb>=1.0",
+  "pandas>=2.0",
+  "pyarrow>=16.0",
+  "pandera>=0.20",
+  "rapidfuzz>=3.9",
+  "musicbrainzngs>=0.7.1",
+  "prefect>=3.0",
+  "streamlit>=1.36",
+  "plotly>=5.22",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.2",
+  "ruff>=0.5",
+  "mypy>=1.10",
+  "pre-commit>=3.7",
+]
+
+# O codigo vive na pasta `src/` (importavel como `src`, ex.: python -m src.run)
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
