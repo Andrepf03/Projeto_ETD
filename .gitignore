@@ -1,0 +1,32 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+
+# Ambiente / segredos
+.env
+.streamlit/secrets.toml
+
+# Dados: nao versionar brutos/intermedios/finais; manter as pastas com .gitkeep
+data/raw/*
+data/staging/*
+data/curated/*
+!data/raw/.gitkeep
+!data/staging/.gitkeep
+!data/curated/.gitkeep
+*.duckdb
+
+# Ferramentas
+.prefect/
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
